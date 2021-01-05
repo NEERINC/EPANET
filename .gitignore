@@ -1,6 +1,13 @@
 # Build
 build
 
+# macOS
+.DS_Store
+
+# Visual Studio Code
+.vs
+.vscode
+
 # Prerequisites
 *.d
 
