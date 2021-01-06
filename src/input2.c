@@ -25,9 +25,12 @@ The following utility functions are all called from INPUT3.C
 **********************************************************************
 */
 
-#include <stdio.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+#ifndef __APPLE__
+#include <malloc.h>
+#endif
 #include <math.h>
 #include "hash.h"
 #include "text.h"
@@ -75,7 +78,7 @@ int  netsize()
    MaxRules    = 0;
    MaxCurves   = 0;
    sect        = -1;
-
+  
 /* Add a default pattern 0 */
    MaxPats = -1;
    addpattern("");
@@ -103,20 +106,20 @@ int  netsize()
 
    /* Add to count of current component */
       switch(sect)
-      {
-            case _JUNCTIONS:  MaxJuncs++;    break;
-            case _RESERVOIRS:
-            case _TANKS:      MaxTanks++;    break;
-            case _PIPES:      MaxPipes++;    break;
-            case _PUMPS:      MaxPumps++;    break;
-            case _VALVES:     MaxValves++;   break;
-            case _CONTROLS:   MaxControls++; break;
-            case _RULES:      addrule(tok);  break; /* See RULES.C */ 
-            case _PATTERNS:   errcode = addpattern(tok);
-                              break;
-            case _CURVES:     errcode = addcurve(tok);
-                              break;
-      }
+     {
+       case _JUNCTIONS:  MaxJuncs++;    break;
+       case _RESERVOIRS:
+       case _TANKS:      MaxTanks++;    break;
+       case _PIPES:      MaxPipes++;    break;
+       case _PUMPS:      MaxPumps++;    break;
+       case _VALVES:     MaxValves++;   break;
+       case _CONTROLS:   MaxControls++; break;
+       case _RULES:      addrule(tok);  break; /* See RULES.C */
+       case _PATTERNS:   errcode = addpattern(tok);
+         break;
+       case _CURVES:     errcode = addcurve(tok);
+         break;
+     }
       if (errcode) break;
    }
 
@@ -169,6 +172,7 @@ int  readdata()
       Npats     = MaxPats;
       PrevPat   = NULL;
       PrevCurve = NULL;
+
       sect      = -1;
       errsum    = 0;
 
@@ -214,11 +218,19 @@ int  readdata()
       /* Otherwise process next line of input in current section */
          else
          {
-            inperr = newline(sect,line);
-            if (inperr > 0)
+            if (sect >=0) //for cases were no section is present on the top of the input file
             {
-               inperrmsg(inperr,sect,line);
-               errsum++;
+                inperr = newline(sect,line);
+                if (inperr > 0)
+                {
+                   inperrmsg(inperr,sect,line);
+                   errsum++;
+                }
+            }
+            else
+            {
+                errcode = 200;
+                break;
             }
          }
 
@@ -260,7 +272,7 @@ int  newline(int sect, char *line)
    {
        case _TITLE:       if (Ntitle < 3)
                           {
-                             n = strlen(line);
+                             n = (int)strlen(line);
                              if (line[n-1] == 10) line[n-1] = ' ';
                              strncpy(Title[Ntitle],line,MAXMSG);
                              Ntitle++;
@@ -290,7 +302,11 @@ int  newline(int sect, char *line)
        case _OPTIONS:     return(optiondata());
 
    /* Data in these sections are not used for any computations */
-       case _COORDS:      return(0);
+       case _COORDS:      if (Coordflag == TRUE)
+                          {
+                              return(coordata());
+                          }
+                          else return(0);
        case _LABELS:      return(0);
        case _TAGS:        return(0);
        case _VERTICES:    return(0);
@@ -413,7 +429,7 @@ int   addnodeID(int n, char *id)
 {
     if (findnode(id)) return(0);         /* see EPANET.C */
     strncpy(Node[n].ID, id, MAXID);
-    HTinsert(Nht, Node[n].ID, n);        /* see HASH.C */
+    ENHashTableInsert(NodeHashTable, Node[n].ID, n);        /* see HASH.C */
     return(1);
 }
 
@@ -430,7 +446,7 @@ int   addlinkID(int n, char *id)
 {
     if (findlink(id)) return(0);         /* see EPANET.C */
     strncpy(Link[n].ID, id, MAXID);
-    HTinsert(Lht, Link[n].ID, n);        /* see HASH.C */
+    ENHashTableInsert(LinkHashTable, Link[n].ID, n);        /* see HASH.C */
     return(1);
 }
 
@@ -782,12 +798,12 @@ int  gettokens(char *s)
 /* Truncate s at start of comment */
    c = strchr(s,';');
    if (c) *c = '\0';
-   len = strlen(s);
+   len = (int)strlen(s);
 
 /* Scan s for tokens until nothing left */
    while (len > 0 && n < MAXTOKS)
    {
-       m = strcspn(s,SEPSTR);          /* Find token length */
+       m = (int)strcspn(s,SEPSTR);          /* Find token length */
        len -= m+1;                     /* Update length of s */
        if (m == 0) s++;                /* No token found */
        else
@@ -795,7 +811,7 @@ int  gettokens(char *s)
           if (*s == '"')               /* Token begins with quote */
           {
              s++;                      /* Start token after quote */
-             m = strcspn(s,"\"\n\r");  /* Find end quote (or EOL) */
+             m = (int)strcspn(s,"\"\n\r");  /* Find end quote (or EOL) */
           }                            
           s[m] = '\0';                 /* Null-terminate the token */
           Tok[n] = s;                  /* Save pointer to token */
