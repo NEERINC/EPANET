@@ -663,8 +663,8 @@ int match(const char *str, const char *substr)
         if (str[i] != ' ') break;
     }
 
-    // Checking first five chars or less, match substr to remainder of str
-    for (j = 0; substr[j] && j < 5; i++, j++)
+    // Check if substr matches remainder of str
+    for (j = 0; substr[j]; i++, j++)
     {
         if (!str[i] || UCHAR(str[i]) != UCHAR(substr[j])) return 0;
     }

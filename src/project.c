@@ -19,8 +19,6 @@
 //*** For the Windows SDK _tempnam function ***//
 #ifdef _WIN32
 #include <windows.h>
-//#else
-//#include <unistd.h >
 #endif
 
 #include "types.h"

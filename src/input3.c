@@ -79,7 +79,6 @@ int juncdata(Project *pr)
     double el,                  // elevation
            y = 0.0;             // base demand
     Snode *node;
-
     int err = 0;
 
     // Add new junction to data base
@@ -282,7 +281,6 @@ int pipedata(Project *pr)
     LinkType type = PIPE;      // Link type
     StatusType status = OPEN;  // Link status
     Slink *link;
-
     int err = 0;
 
     // Add new pipe to data base
@@ -373,7 +371,6 @@ int pumpdata(Project *pr)
     double y;
     Slink *link;
     Spump *pump;
-
     int err = 0;
 
     /* Add new pump to data base */
@@ -491,7 +488,6 @@ int valvedata(Project *pr)
            setting,            // Valve setting
            lcoeff = 0.0;       // Minor loss coeff.
     Slink *link;
-
     int err = 0;
 
     // Add new valve to data base
@@ -737,7 +733,7 @@ int vertexdata(Project *pr)
 
     int j;
     double x, y;
-
+    
     // Check for valid link ID
     if (parser->Ntokens < 3) return 201;
     if ((j = findlink(net, parser->Tok[0])) == 0) return setError(parser, 0, 204);
