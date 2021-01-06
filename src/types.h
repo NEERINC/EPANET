@@ -37,7 +37,7 @@ typedef  int          INT4;                                                    /
 -----------------------------
 */
 /*** Updated ***/
-#define   CODEVERSION        20100
+#define   CODEVERSION        20101
 #define   MAGICNUMBER        516114521
 #define   ENGINE_VERSION     201
 #define   EOFMARK            0x1A  /* Use 0x04 for UNIX systems */
