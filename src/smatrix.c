@@ -31,8 +31,12 @@ Linsolve() solves the linearized system of hydraulic equations.
 */
 
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
+#ifndef __APPLE__
+#include <malloc.h>
+#else
+#include <stdlib.h>
+#endif
 #include <math.h>
 #include "hash.h"
 #include "text.h"
