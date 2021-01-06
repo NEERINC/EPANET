@@ -25,10 +25,9 @@ The following utility functions are all called from INPUT3.C
 **********************************************************************
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 #include <math.h>
 #include "hash.h"
 #include "text.h"

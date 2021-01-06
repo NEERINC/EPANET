@@ -20,8 +20,8 @@ data describing a piping network to a file in EPANET's text format.
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 #include <math.h>
 #include "hash.h"    
 #include "text.h"

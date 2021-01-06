@@ -20,10 +20,9 @@ All functions in this module are called from newline() in INPUT2.C.
 **********************************************************************
 */
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
-#include <malloc.h>
 #include <math.h>
 #include "hash.h"
 #include "text.h"
